@@ -1,0 +1,48 @@
+<%- include('partials/head') %>
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Chubby Lung — 龙泡泡毛绒玩偶</div>
+    <h1 class="hero-title">Hàng chính hãng<br><span>CHOEARTH × Hypergryph</span></h1>
+    <p class="hero-desc">Bộ sưu tập thú bông Chubby Lung chính hãng từ game Arknights — Nian, Dusk, Ling, Chongyue, Shu. Đủ dòng: tiêu chuẩn, khổng lồ, móc khóa, gối ôm.</p>
+    <div class="hero-actions">
+      <a href="/products"><button class="btn-primary">Mua ngay</button></a>
+      <a href="/products?cat=mockey"><button class="btn-secondary">Xem móc khóa</button></a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-num" data-count="5">5</div><div class="hero-stat-label">Nhân vật Sui</div></div>
+      <div class="hero-stat"><div class="hero-stat-num" data-count="11">11</div><div class="hero-stat-label">Dòng sản phẩm</div></div>
+      <div class="hero-stat"><div class="hero-stat-num" data-count="100" data-suffix="%">100%</div><div class="hero-stat-label">Chính hãng</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">Sản phẩm <span>nổi bật</span></div>
+    <a href="/products" class="see-all">Xem tất cả →</a>
+  </div>
+  <div class="product-grid"><% hot.forEach(function (p) { %><%- include('partials/product-card', { p: p, viewLabel: 'Xem' }) %><% }); %></div>
+</div>
+
+<div style="background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+<div class="section">
+  <div class="section-header">
+    <div class="section-title">Hàng <span>mới về</span></div>
+    <a href="/products?cat=new" class="see-all">Xem tất cả →</a>
+  </div>
+  <div class="product-grid"><% fresh.forEach(function (p) { %><%- include('partials/product-card', { p: p, viewLabel: 'Xem' }) %><% }); %></div>
+</div>
+</div>
+
+<div class="section" style="text-align:center">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px">
+    <% [['100% Chính Hãng', 'Tag CHOEARTH / Hypergryph đầy đủ'], ['Giao hàng toàn quốc', '2-5 ngày làm việc'], ['Đổi trả 7 ngày', 'Lỗi sản phẩm hoàn tiền 100%'], ['Hỗ trợ Doctor', 'Tư vấn sản phẩm nhiệt tình']].forEach(function (f) { %>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:28px">
+      <div style="font-weight:600;margin-bottom:6px"><%= f[0] %></div>
+      <div style="font-size:13px;color:var(--text3)"><%= f[1] %></div>
+    </div>
+    <% }); %>
+  </div>
+</div>
+<%- include('partials/foot') %>

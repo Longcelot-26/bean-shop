@@ -1,0 +1,28 @@
+<%- include('head') %>
+    <h1 style="font-size:24px;font-weight:700;margin-bottom:24px">Tổng quan</h1>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-icon"></div><div class="stat-value"><%= fmt(stats.revenue) %></div><div class="stat-label">Doanh thu</div><div class="stat-change">↑ Tất cả thời gian</div></div>
+      <div class="stat-card"><div class="stat-icon"></div><div class="stat-value"><%= stats.totalOrders %></div><div class="stat-label">Tổng đơn hàng</div><div class="stat-change" style="color:var(--info)"><%= stats.pending %> chờ xác nhận</div></div>
+      <div class="stat-card"><div class="stat-icon"></div><div class="stat-value"><%= stats.totalProducts %></div><div class="stat-label">Sản phẩm</div></div>
+      <div class="stat-card"><div class="stat-icon"></div><div class="stat-value"><%= stats.totalUsers %></div><div class="stat-label">Người dùng</div></div>
+    </div>
+    <div class="table-card">
+      <div class="table-header"><h3>Đơn hàng gần đây</h3><a href="/admin/orders" style="font-size:13px;color:var(--accent)">Xem tất cả →</a></div>
+      <table class="admin-table">
+        <thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Tổng tiền</th><th>Trạng thái</th><th>Ngày</th><th>Cập nhật</th></tr></thead>
+        <tbody>
+          <% if (stats.recentOrders.length === 0) { %><tr><td colspan="6" style="text-align:center;color:var(--text3);padding:32px">Chưa có đơn hàng nào</td></tr><% } %>
+          <% stats.recentOrders.forEach(function (o) { const st = ORDER_STATUS[o.status] || ['--', '']; %>
+          <tr>
+            <td><b><%= o.id %></b></td>
+            <td><%= o.name || '' %></td>
+            <td><%= fmt(o.total) %></td>
+            <td><span class="order-status <%= st[1] %>"><%= st[0] %></span></td>
+            <td><%= fmtTime(o.time, false) %></td>
+            <td><%- include('status-select', { o: o }) %></td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+<%- include('foot') %>

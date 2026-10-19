@@ -1,0 +1,78 @@
+<nav class="nav">
+  <a href="/" class="nav-brand">CHUBBY<span>LUNG</span></a>
+  <div class="nav-links">
+    <a href="/" class="<%= active === 'home' ? 'active' : '' %>">Trang chủ</a>
+    <details class="nav-dropdown">
+      <summary class="nav-dropdown-trigger <%= active === 'products' ? 'active' : '' %>" aria-haspopup="true">
+        Sản phẩm <span class="nav-dropdown-chevron" aria-hidden="true"></span>
+      </summary>
+      <div class="nav-dropdown-menu">
+        <div class="nav-dropdown-heading">Danh mục</div>
+        <a class="nav-dropdown-all" href="/products">Tất cả sản phẩm</a>
+        <% Object.keys(CATEGORIES).filter(function (key) { return key !== 'all'; }).forEach(function (key) { %>
+        <a href="/products?cat=<%= key %>"><%= CATEGORIES[key] %></a>
+        <% }); %>
+        <a href="/products?cat=new">Hàng mới</a>
+        <a href="/products?cat=sale">Sale</a>
+      </div>
+    </details>
+    <a href="/orders" class="<%= active === 'orders' ? 'active' : '' %>">Đơn hàng</a>
+  </div>
+  <div class="nav-right">
+    <input class="nav-search" placeholder="Tìm Chubby Lung..." data-search>
+    <% if (isAdmin) { %><a href="/admin" style="font-size:12px;color:var(--text3);padding:4px 8px;background:var(--bg3);border-radius:4px;margin-right:4px">Admin</a><% } %>
+    <% if (user) { %>
+      <span style="font-size:13px;color:var(--text2)">Xin chào, <b style="color:var(--text)"><%= user %></b></span>
+      <a href="/logout"><button class="user-btn">Đăng xuất</button></a>
+    <% } else { %>
+      <a href="/login"><button class="user-btn">Đăng nhập</button></a>
+    <% } %>
+    <label class="theme-toggle" title="Chuyển sáng/tối">
+      <input type="checkbox" id="themeCheck" onchange="toggleTheme(this)">
+      <div class="theme-track">
+        <span class="t-moon">&#9790;</span>
+        <span class="t-sun">&#9728;</span>
+      </div>
+      <div class="theme-thumb"></div>
+    </label>
+    <a href="/cart"><button class="cart-btn">Giỏ hàng <span class="cart-badge">0</span></button></a>
+  </div>
+</nav>
+<script>
+(function(){
+  var dark = localStorage.getItem('theme') === 'dark';
+  if (dark) document.body.classList.add('dark');
+  var cb = document.getElementById('themeCheck');
+  if (cb) cb.checked = dark;
+  var canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  var categoryAnimations = new WeakMap();
+  document.querySelectorAll('.nav-dropdown').forEach(function (dropdown) {
+    dropdown.addEventListener('toggle', function () {
+      if (!dropdown.open) return;
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      dropdown.querySelectorAll('.nav-dropdown-menu a').forEach(function (item, index) {
+        var previous = categoryAnimations.get(item);
+        if (previous) previous.cancel();
+        categoryAnimations.set(item, item.animate(
+          [{ opacity: 0, transform: 'translateY(7px)' }, { opacity: 1, transform: 'translateY(0)' }],
+          { duration: reduceMotion ? 0 : 300, delay: reduceMotion ? 0 : 40 + index * 50, easing: 'ease', fill: 'both' },
+        ));
+      });
+    });
+    if (canHover) {
+      dropdown.addEventListener('mouseenter', function () { dropdown.open = true; });
+      dropdown.addEventListener('mouseleave', function () { dropdown.open = false; });
+      var trigger = dropdown.querySelector('.nav-dropdown-trigger');
+      trigger.addEventListener('click', function (event) {
+        event.preventDefault();
+        trigger.blur();
+        dropdown.open = true;
+      });
+      dropdown.addEventListener('focusin', function () { dropdown.open = true; });
+      dropdown.addEventListener('focusout', function (event) {
+        if (!dropdown.contains(event.relatedTarget)) dropdown.open = false;
+      });
+    }
+  });
+})();
+</script>

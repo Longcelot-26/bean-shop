@@ -1,0 +1,111 @@
+// prisma/schema.prisma — cơ sở dữ liệu PostgreSQL của Chubby Lung
+// Tạo bảng: npx prisma migrate dev --name init   (hoặc: npm run db:migrate -- --name init)
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum OrderStatus {
+  pending
+  processing
+  shipped
+  done
+}
+
+enum PaymentMethod {
+  cod
+  transfer
+  momo
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique @db.VarChar(50)
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  cartItems CartItem[]
+  orders    Order[]
+
+  @@map("users")
+}
+
+model Product {
+  id            String   @id @db.VarChar(20) // p001, p002, ... (giữ nguyên mã cũ để URL /product/p001 không đổi)
+  name          String
+  price         Int
+  originalPrice Int      @map("original_price")
+  category      String   @db.VarChar(30)
+  stock         Int      @default(0)
+  sold          Int      @default(0)
+  imgFile       String?  @map("img_file")
+  description   String   @default("")
+  tags          String[] @default([])
+  characterName String?  @map("character_name")
+  sizeLabel     String?  @map("size_label")
+  brand         String   @default("CHOEARTH / Hypergryph")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+
+  @@index([category])
+  @@map("products")
+}
+
+// Giỏ hàng theo tài khoản. Tên/giá/ảnh luôn lấy từ bảng products (không lưu bản sao).
+model CartItem {
+  id        Int    @id @default(autoincrement())
+  userId    Int    @map("user_id")
+  productId String @map("product_id") @db.VarChar(20)
+  quantity  Int    @default(1)
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@map("cart_items")
+}
+
+model Order {
+  id           String        @id @db.VarChar(20) // ORD0000001
+  userId       Int?          @map("user_id")
+  customerName String        @map("customer_name")
+  phone        String        @db.VarChar(30)
+  address      String
+  payment      PaymentMethod @default(cod)
+  note         String        @default("")
+  total        Int
+  status       OrderStatus   @default(pending)
+  createdAt    DateTime      @default(now()) @map("created_at")
+
+  user  User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  items OrderItem[]
+
+  @@index([userId])
+  @@index([status])
+  @@map("orders")
+}
+
+// Mỗi dòng đơn hàng lưu bản sao tên/giá/ảnh tại thời điểm mua (đổi giá sau này không làm sai lịch sử).
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  orderId   String  @map("order_id") @db.VarChar(20)
+  productId String? @map("product_id") @db.VarChar(20)
+  name      String
+  price     Int
+  quantity  Int
+  imgFile   String? @map("img_file")
+
+  order   Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+  @@map("order_items")
+}

@@ -1,0 +1,7 @@
+<div class="product-card" data-href="/product/<%= p.id %>">
+  <div class="card-img" style="height:160px"><%- include('product-img', { p: p }) %></div>
+  <div class="card-body">
+    <div class="card-name" style="font-size:13px"><%= p.name %></div>
+    <div class="price-current" style="font-size:15px"><%= fmt(p.price) %></div>
+  </div>
+</div>

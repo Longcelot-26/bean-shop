@@ -1,0 +1,23 @@
+<%- include('partials/head') %>
+<div class="section">
+  <h1 style="font-size:26px;font-weight:700;margin-bottom:28px">Giỏ hàng</h1>
+  <div class="cart-layout" id="cartLayout">
+    <div id="cartItems">
+      <div class="empty-cart">
+        <h3>Giỏ hàng trống</h3>
+        <p>Bạn chưa có sản phẩm nào trong giỏ hàng</p>
+        <a href="/products"><button class="btn-primary">Mua sắm ngay</button></a>
+      </div>
+    </div>
+    <div id="orderSummary" style="display:none" class="order-summary">
+      <h3>Tóm tắt đơn hàng</h3>
+      <div class="summary-row"><span>Tạm tính</span><span id="subtotal">0đ</span></div>
+      <div class="summary-row"><span>Phí ship</span><span style="color:var(--success)">Miễn phí</span></div>
+      <div class="summary-row"><span>Giảm giá</span><span id="discountRow">0đ</span></div>
+      <div class="summary-total"><span>Tổng cộng</span><span id="total">0đ</span></div>
+      <a href="/checkout"><button class="checkout-btn">Thanh toán →</button></a>
+      <div style="text-align:center;margin-top:14px;font-size:12px;color:var(--text3)">Thanh toán bảo mật SSL</div>
+    </div>
+  </div>
+</div>
+<%- include('partials/foot') %>

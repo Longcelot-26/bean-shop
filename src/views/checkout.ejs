@@ -1,0 +1,64 @@
+<%- include('partials/head') %>
+<div class="section">
+  <h1 style="font-size:26px;font-weight:700;margin-bottom:28px">Thanh toán</h1>
+  <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+  <form method="POST" id="checkoutForm">
+    <div class="checkout-layout">
+      <div>
+        <div class="form-section">
+          <h3>Thông tin giao hàng</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Họ và tên *</label>
+              <input name="fullname" class="form-input" required maxlength="100" placeholder="Nguyễn Văn A">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Số điện thoại *</label>
+              <input name="phone" class="form-input" required maxlength="30" placeholder="0901 234 567" type="tel">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Địa chỉ chi tiết *</label>
+            <input name="address" class="form-input" required maxlength="200" placeholder="Số nhà, tên đường...">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Quận / Huyện</label>
+              <input name="district" class="form-input" maxlength="100" placeholder="Quận 1">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tỉnh / Thành phố</label>
+              <input name="city" class="form-input" maxlength="100" placeholder="TP. Hồ Chí Minh">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ghi chú đơn hàng</label>
+            <textarea name="note" class="form-input" rows="3" maxlength="500" placeholder="Ghi chú (tùy chọn)..."></textarea>
+          </div>
+        </div>
+        <div class="form-section">
+          <h3>Phương thức thanh toán</h3>
+          <div class="payment-methods" id="paymentMethods">
+            <label class="payment-method active"><input type="radio" name="payment" value="cod" checked><div class="payment-method-name">Tiền mặt</div></label>
+            <label class="payment-method"><input type="radio" name="payment" value="transfer"><div class="payment-method-name">Chuyển khoản</div></label>
+            <label class="payment-method"><input type="radio" name="payment" value="momo"><div class="payment-method-name">MoMo</div></label>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="order-summary">
+          <h3>Đơn hàng của bạn</h3>
+          <div id="checkoutItems"></div>
+          <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+            <div class="summary-row"><span>Tạm tính</span><span id="co-sub">0đ</span></div>
+            <div class="summary-row"><span>Phí vận chuyển</span><span style="color:var(--success)">Miễn phí</span></div>
+            <div class="summary-total"><span>Tổng</span><span id="co-total">0đ</span></div>
+          </div>
+          <button type="submit" class="place-order-btn" id="placeBtn">Đặt hàng ngay</button>
+          <div style="text-align:center;margin-top:10px;font-size:12px;color:var(--text3)">Thông tin được bảo mật</div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+<%- include('partials/foot') %>

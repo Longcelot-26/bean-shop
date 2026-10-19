@@ -1,0 +1,32 @@
+<%- include('partials/head') %>
+<div class="section">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+    <h1 style="font-size:24px;font-weight:700"><% if (q) { %>Kết quả tìm kiếm: <span style="color:var(--accent)"><%= q %></span><% } else { %>Tất cả sản phẩm<% } %></h1>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span style="font-size:14px;color:var(--text3)"><%= items.length %> sản phẩm</span>
+      <select data-sort data-cat="<%= cat %>" style="background:var(--bg3);border:1px solid var(--border2);color:var(--text);padding:8px 14px;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;outline:none">
+        <% [['default', 'Mặc định'], ['popular', 'Bán chạy'], ['price_asc', 'Giá tăng dần'], ['price_desc', 'Giá giảm dần']].forEach(function (o) { %>
+        <option value="<%= o[0] %>" <%= sort === o[0] ? 'selected' : '' %>><%= o[1] %></option>
+        <% }); %>
+      </select>
+    </div>
+  </div>
+  <div style="margin-bottom:20px">
+    <input class="nav-search" style="width:100%;max-width:400px" placeholder="Tìm sản phẩm..." value="<%= q %>" data-search>
+  </div>
+  <div class="cat-tabs">
+    <% Object.keys(CATEGORIES).forEach(function (k) { %>
+    <button class="cat-tab <%= (cat === k || (cat === 'filter' && k === 'new')) ? 'active' : '' %>" data-href="/products?cat=<%= k %>"><%= CATEGORIES[k] %></button>
+    <% }); %>
+    <button class="cat-tab <%= cat === 'sale' ? 'active' : '' %>" data-href="/products?cat=sale">Sale</button>
+  </div>
+  <div class="product-showcase">
+    <div class="product-grid">
+      <% if (items.length === 0) { %>
+      <div style="text-align:center;padding:60px;color:var(--text3);font-size:16px;grid-column:1/-1">Không tìm thấy sản phẩm nào</div>
+      <% } %>
+      <% items.forEach(function (p) { %><%- include('partials/product-card', { p: p, viewLabel: 'Xem chi tiết' }) %><% }); %>
+    </div>
+  </div>
+</div>
+<%- include('partials/foot') %>

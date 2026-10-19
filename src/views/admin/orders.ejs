@@ -1,0 +1,22 @@
+<%- include('head') %>
+    <h1 style="font-size:24px;font-weight:700;margin-bottom:24px">Quản lý đơn hàng (<%= items.length %>)</h1>
+    <div class="table-card">
+      <table class="admin-table">
+        <thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Địa chỉ</th><th>Tổng tiền</th><th>Trạng thái</th><th>Thời gian</th><th>Cập nhật</th></tr></thead>
+        <tbody>
+          <% if (items.length === 0) { %><tr><td colspan="7" style="text-align:center;color:var(--text3);padding:40px">Chưa có đơn hàng</td></tr><% } %>
+          <% items.forEach(function (o) { const st = ORDER_STATUS[o.status] || ['--', '']; %>
+          <tr>
+            <td><b><%= o.id %></b></td>
+            <td><%= o.name || '' %><br><small style="color:var(--text3)"><%= o.phone || '' %></small></td>
+            <td style="font-size:12px;color:var(--text2);max-width:200px"><%= o.address || '' %></td>
+            <td><b style="color:var(--accent)"><%= fmt(o.total) %></b></td>
+            <td><span class="order-status <%= st[1] %>"><%= st[0] %></span></td>
+            <td><%= fmtTime(o.time) %></td>
+            <td><%- include('status-select', { o: o }) %></td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+<%- include('foot') %>

@@ -1,0 +1,14 @@
+<%- include('head') %>
+    <h1 style="font-size:24px;font-weight:700;margin-bottom:24px">Người dùng (<%= items.length %>)</h1>
+    <div class="table-card">
+      <table class="admin-table">
+        <thead><tr><th>Tên đăng nhập</th><th>Ngày tạo</th><th>Số đơn hàng</th></tr></thead>
+        <tbody>
+          <% if (items.length === 0) { %><tr><td colspan="3" style="text-align:center;color:var(--text3);padding:40px">Chưa có người dùng nào</td></tr><% } %>
+          <% items.forEach(function (u) { %>
+          <tr><td><b><%= u[0] %></b></td><td><%= fmtTime(u[1].created, false) %></td><td><%= u[2] %></td></tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+<%- include('foot') %>

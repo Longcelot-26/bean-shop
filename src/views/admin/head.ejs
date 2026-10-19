@@ -1,0 +1,12 @@
+<%- include('../partials/head') %>
+<div class="admin-layout">
+  <div class="admin-sidebar">
+    <div class="admin-sidebar-title">Quản lý</div>
+    <% [['dashboard', '/admin', 'Dashboard'], ['products', '/admin/products', 'Sản phẩm'], ['orders', '/admin/orders', 'Đơn hàng'], ['users', '/admin/users', 'Người dùng']].forEach(function (m) { %>
+    <a href="<%= m[1] %>" class="admin-nav-item <%= adminActive === m[0] ? 'active' : '' %>"><%= m[2] %></a>
+    <% }); %>
+    <div style="margin-top:auto;padding-top:20px;border-top:1px solid var(--border)">
+      <a href="/admin/logout" class="admin-nav-item" style="color:var(--danger)">Đăng xuất</a>
+    </div>
+  </div>
+  <div class="admin-content">

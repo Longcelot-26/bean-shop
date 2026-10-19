@@ -1,0 +1,6 @@
+<form method="POST" action="/admin/update_order" style="display:inline">
+  <input type="hidden" name="oid" value="<%= o.id %>">
+  <select name="status" class="form-input" style="padding:4px 8px;font-size:12px;width:auto" onchange="this.form.submit()">
+    <% Object.keys(ORDER_STATUS).forEach(function (k) { %><option value="<%= k %>" <%= o.status === k ? 'selected' : '' %>><%= ORDER_STATUS[k][0] %></option><% }); %>
+  </select>
+</form>

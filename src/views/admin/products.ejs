@@ -1,0 +1,22 @@
+<%- include('head') %>
+    <h1 style="font-size:24px;font-weight:700;margin-bottom:24px">Quản lý sản phẩm</h1>
+    <div class="table-card">
+      <div class="table-header"><h3>Danh sách sản phẩm (<%= items.length %>)</h3></div>
+      <table class="admin-table">
+        <thead><tr><th>Ảnh</th><th>Tên sản phẩm</th><th>Giá</th><th>Danh mục</th><th>Tồn kho</th><th>Đã bán</th><th>Tags</th></tr></thead>
+        <tbody>
+          <% items.forEach(function (p) { %>
+          <tr>
+            <td><% if (p.img_file) { %><img src="/imgs/<%= p.img_file %>" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:6px"><% } %></td>
+            <td><b><%= p.name %></b><br><small style="color:var(--text3)"><%= p.id %></small></td>
+            <td><%= fmt(p.price) %></td>
+            <td><%= CATEGORIES[p.category] || '--' %></td>
+            <td><%= p.stock %></td>
+            <td><%= p.sold %></td>
+            <td><% (p.tags || []).forEach(function (t) { %><span class="tag tag-<%= tagClass(t) %>"><%= t %></span><% }); %></td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+<%- include('foot') %>

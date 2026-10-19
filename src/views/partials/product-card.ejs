@@ -1,0 +1,18 @@
+<div class="product-card" data-href="/product/<%= p.id %>">
+  <div class="card-img"><%- include('product-img', { p: p }) %>
+    <div class="card-overlay">
+      <button data-add-to-cart data-pid="<%= p.id %>">+ Giỏ hàng</button>
+      <button data-href="/product/<%= p.id %>"><%= viewLabel %></button>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="card-tags"><% (p.tags || []).forEach(function (t) { %><span class="tag tag-<%= tagClass(t) %>"><%= t %></span><% }); %></div>
+    <div class="card-name"><%= p.name %></div>
+    <div class="card-price">
+      <span class="price-current"><%= fmt(p.price) %></span>
+      <span class="price-old"><%= fmt(p.original_price) %></span>
+      <span class="price-discount">-<%= discountPercent(p) %>%</span>
+    </div>
+    <div class="card-meta"><span>Đã bán <%= p.sold %></span><span class="card-stock">Còn <%= p.stock %></span></div>
+  </div>
+</div>
