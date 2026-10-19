@@ -6,12 +6,12 @@
   "license": "UNLICENSED",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git+https://github.com/Longcelot-26/bean-shop.git"
   },
   "bugs": {
-    "url": ""
+    "url": "https://github.com/Longcelot-26/bean-shop/issues"
   },
-  "homepage": "",
+  "homepage": "https://github.com/Longcelot-26/bean-shop#readme",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
