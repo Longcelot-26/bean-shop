@@ -3,6 +3,26 @@
 Web bán thú bông Arknights Dragon Bubbles. Express 5 + EJS, dữ liệu lưu trong **PostgreSQL** qua **Prisma 7**.
 Kiến trúc phân lớp: **route → controller → service → Prisma**.
 
+## Công nghệ sử dụng
+
+| Thành phần        | Công nghệ                                        |
+| ----------------- | ------------------------------------------------ |
+| Runtime           | Node.js, JavaScript                              |
+| Backend           | Express 5, kiến trúc route–controller–service    |
+| Giao diện         | EJS, CSS, JavaScript phía trình duyệt            |
+| Cơ sở dữ liệu     | PostgreSQL, Prisma ORM 7                         |
+| Xác thực          | Session cookie, bcryptjs, giới hạn đăng nhập sai |
+| Kiểm thử và build | Supertest, smoke test, esbuild                   |
+
+## Tính năng chính
+
+- Xem, tìm kiếm, lọc và sắp xếp sản phẩm; xem thông tin chi tiết, giá và tồn kho.
+- Đăng ký, đăng nhập, đăng xuất và quản lý session khách hàng.
+- Thêm, cập nhật, xóa sản phẩm trong giỏ; số lượng được kiểm tra theo tồn kho.
+- Tạo đơn hàng, xem xác nhận và lịch sử đơn hàng.
+- Khu vực quản trị có dashboard, danh sách sản phẩm/đơn hàng/người dùng và cập nhật trạng thái đơn.
+- Nạp dữ liệu sản phẩm mẫu hoặc import dữ liệu cũ từ JSON.
+
 ## Cấu trúc
 
 ```
@@ -38,6 +58,13 @@ shop-express/
 | `order_items` | dòng đơn hàng | lưu **bản sao** tên/giá/ảnh lúc mua; xoá sản phẩm thì `product_id` = NULL |
 
 ## Chạy máy local — từng bước
+
+**Clone repository**
+
+```bash
+git clone https://github.com/Longcelot-26/bean-shop.git
+cd bean-shop
+```
 
 **Bước 1. Cài thư viện** (tự sinh Prisma Client nhờ `postinstall`)
 
@@ -88,8 +115,6 @@ Mac bị kẹt cổng 5000 (AirPlay Receiver) -> đặt `PORT=8080` trong `.env`
 | `npm run db:studio`                | xem/sửa dữ liệu bằng giao diện web                   |
 | `npm test`                         | chạy bài test (cần `TEST_DATABASE_URL`)              |
 
-> **Vì sao có `scripts/buildPrismaClient.js`?** Prisma 7 sinh Client bằng TypeScript. Project này là JavaScript thuần nên sau `prisma generate` ta dùng esbuild biên dịch thành `src/generated/client.cjs` — chạy được trên mọi phiên bản Node hợp lệ, không cần cờ đặc biệt. Bước này nằm sẵn trong `npm run db:generate`.
-
 ## Nhập dữ liệu từ shop_db.json cũ
 
 ```bash
@@ -109,18 +134,6 @@ npm test
 
 Bài test **xoá sạch** DB test mỗi lần chạy, nên từ chối chạy nếu `TEST_DATABASE_URL` thiếu, trùng `DATABASE_URL`, hoặc tên database không có chữ `test`.
 
-## Một request đi qua các lớp thế nào
-
-Ví dụ `POST /api/cart/add` (thêm vào giỏ):
-
-1. `routes/cart.routes.js` — khớp URL, chạy middleware `apiLoginRequired` (chưa đăng nhập -> 401).
-2. `controllers/cartController.js` → `apiAdd` — lấy `pid`, `qty` từ `req.body`, gọi service.
-3. `services/cartService.js` → `addItem` — kiểm tra số lượng, tồn kho, rồi gọi Prisma: `upsert` + `increment` (cộng dồn nguyên tử trong DB) và chặn trần = min(tồn kho, 99).
-4. `config/DB.js` → `toCallback` — đổi Promise của Prisma thành `callback(err, result)`.
-5. Kết quả đi ngược lại: service → controller → `res.json(...)`. Lỗi nghiệp vụ (`ServiceError`) đổi thành mã 400/404; lỗi lạ chuyển cho `middlewares/error.js`.
-
-Prisma chỉ trả Promise nên `DB.js` bọc lại thành callback; các service giữ kiểu `(err, result)` như trước, controller không phải sửa.
-
 ## Deploy lên EC2 (Amazon Linux 2023)
 
 ```bash
@@ -137,18 +150,18 @@ sudo systemctl restart postgresql
 sudo -u postgres psql -c "CREATE USER chubbylung WITH PASSWORD 'mat-khau-manh';"
 sudo -u postgres psql -c "CREATE DATABASE chubbylung OWNER chubbylung;"
 
-# 4. Dừng bản cũ, lấy code mới
+# 4. Dừng bản cũ, lấy mã nguồn
 sudo systemctl stop chubblung
-cd ~ && git clone <repo-của-bạn> shop-express
-cp -r ~/Shoptest/imgs/. ~/shop-express/imgs/
+cd ~ && git clone https://github.com/Longcelot-26/bean-shop.git shop-express
 
-# 5. Cài thư viện + cấu hình
-cd ~/shop-express && npm ci --omit=dev
+# 5. Cài thư viện + cấu hình (repo hiện chưa có package-lock.json)
+cd ~/shop-express && npm install --omit=dev
 cp .env.example .env && nano .env     # NODE_ENV=production, TRUST_PROXY=1, DATABASE_URL, ADMIN_PASS, SESSION_SECRET
 
-# 6. Tạo bảng + nhập dữ liệu cũ (repo phải có prisma/migrations)
+# 6. Tạo bảng + nạp dữ liệu (repo phải có prisma/migrations)
 npm run db:deploy
-npm run db:import -- ~/Shoptest/shop_db.json
+# Tùy chọn: chỉ chạy nếu có file shop_db.json dữ liệu cũ
+npm run db:import -- /duong-dan/toi/shop_db.json
 
 # 7. Cập nhật systemd + nginx theo deploy/
 sudo cp deploy/chubblung.service /etc/systemd/system/chubblung.service
@@ -157,6 +170,6 @@ sudo systemctl daemon-reload && sudo systemctl restart chubblung && sudo nginx -
 ```
 
 Kiểm tra: `sudo systemctl status chubblung`, `journalctl -u chubblung -n 50`, `curl -I http://localhost`.
-Cập nhật code sau này: `git pull && npm ci --omit=dev && npm run db:deploy && sudo systemctl restart chubblung`.
+Cập nhật code sau này: `git pull && npm install --omit=dev && npm run db:deploy && sudo systemctl restart chubblung`.
 
 Mật khẩu DB có ký tự đặc biệt phải mã hoá URL trong `DATABASE_URL`. Nên sao lưu định kỳ: `pg_dump -U chubbylung chubbylung > backup.sql`.
