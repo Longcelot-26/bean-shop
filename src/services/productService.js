@@ -22,20 +22,7 @@ function toView(p) {
 }
 
 function getAll(cb) {
-  const work = Promise.all([
-    prisma.product.findMany({ orderBy: { id: 'asc' } }),
-    prisma.orderItem.groupBy({
-      by: ['productId'],
-      where: { productId: { not: null } },
-      _sum: { quantity: true },
-    }),
-  ]).then(([products, sales]) => {
-    const soldByProduct = new Map(sales.map((sale) => [sale.productId, sale._sum.quantity || 0]));
-    return products.map((product) => toView({
-      ...product,
-      sold: soldByProduct.get(product.id) || 0,
-    }));
-  });
+  const work = prisma.product.findMany({ orderBy: { id: 'asc' } }).then((rows) => rows.map(toView));
   toCallback(work, cb);
 }
 

@@ -81,10 +81,11 @@ function createOrder(username, form, cb) {
                 .then((order) => tx.cartItem
                   .deleteMany({ where: { userId: user.id, id: { in: lines.map((l) => l.id) } } })
                   .then((deleted) => {
-                    
-                    
                     if (deleted.count !== lines.length) throw new EmptyCartError();
-                    return order;
+                    return Promise.all(lines.map((line) => tx.product.update({
+                      where: { id: line.productId },
+                      data: { sold: { increment: line.quantity } },
+                    }))).then(() => order);
                   }));
             });
         }))
