@@ -16,7 +16,6 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "test": "node scripts/smokeTest.js",
     "db:generate": "prisma generate && node scripts/buildPrismaClient.js",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
@@ -37,9 +36,6 @@
     "express-rate-limit": "^8.7.1",
     "pg": "^8.23.1",
     "prisma": "^7.10.0"
-  },
-  "devDependencies": {
-    "supertest": "^7.3.1"
   },
   "private": true,
   "engines": {
